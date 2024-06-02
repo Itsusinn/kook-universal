@@ -6,7 +6,7 @@ on:
     branches: ["master", "main"]
 env:
   APP_NAME: "kook"
-  URL: "https://www.kookapp.cn/"
+  URL: "https://www.kookapp.cn/app/login"
   WIDTH: "1200"
   HEIGHT: "780"
 
