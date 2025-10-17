@@ -23,62 +23,19 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-          - os: macos-latest
-            target: x86_64-apple-darwin
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.toolchain || 'stable' }}
-          target: ${{ matrix.target }}
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: ${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ matrix.target }}
-            
       - name: Install pake-cli local
         shell: bash
         run: |
           echo "install pake on local"
-          npm install pake-cli
+          pnpm install -g pake-cli
+          pake https://www.kookapp.cn/app/login --name KOOK --width 1200 --height 800 --hide-title-bar
 
-      - name: Install dependencies
-        run: |
-          npm install shelljs
-          npm install axios
-
-      - name: Build with pake-cli
-        run: |
-          node ./script/build_with_pake_cli.mjs
-        env:
-          URL: ${{ env.URL }}
-          NAME: ${{ env.APP_NAME }}
-          # ICON: ${{ inputs.icon }}
-          HEIGHT: ${{ env.HEIGHT }}
-          WIDTH: ${{ env.WIDTH }}
-          # TRANSPARENT: ${{ inputs.transparent }}
-          # FULLSCREEN: ${{ inputs.fullscreen }}
-          # RESIZE: ${{ inputs.resize }}
-          # MULTI_ARCH: ${{ inputs.multi_arch }}
-          # TARGETS: ${{ inputs.targets }}
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: 'node_modules/pake-cli/output/*'
+          path: './*exe'
   release:
     name: Release
     needs: [compile]
